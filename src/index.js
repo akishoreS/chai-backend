@@ -1,13 +1,13 @@
-
 import dotenv from "dotenv"
-dotenv.config(); 
+import { app } from "./app.js";
 import connectDB from "./db/index.js";
 
+dotenv.config(); 
 
 connectDB()
 .then(()=> {
-    appendFile.listen(process.env.PORT || 8000,()=>{
-        console.log(`Server running on port : ${process.env.port}`)
+    app.listen(process.env.PORT || 8000,()=>{
+        console.log(`Server running on port : ${process.env.PORT}`)
     })
 })
 .catch((err)=> {

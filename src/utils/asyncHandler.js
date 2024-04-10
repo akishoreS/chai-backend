@@ -1,7 +1,7 @@
 //it just creates a method and exports it
 const asyncHandler=(requestHandler)=>{
-    (req,res,next)=>{
-        Promise.resolve(requietHandler(req,res,next)).catch(err => next(err))
+    return (req,res,next)=>{
+        Promise.resolve(requestHandler(req,res,next)).catch((err) => next(err))
     }
 }
 

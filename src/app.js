@@ -15,4 +15,10 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))//get data encode with 
 app.use(express.static("public"))//to store publuc data accesiv]ble by anyone
 app.use(cookieParser()) 
 
+//routes
+import userRouter from './routes/user.routes.js'
+
+//routes declaration
+app.use("/api/v1/users",userRouter)
+
 export{app}
