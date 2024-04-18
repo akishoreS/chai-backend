@@ -1,9 +1,11 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-import { uploadOncloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-// import { create } from "domain";
+import { create } from "domain";
+// import jwt from "jsonwebtoken"
+// import mongoose from "mongoose"
 
 const registerUser = asyncHandler(async (req,res) => {
    // get user details from frontend
@@ -18,7 +20,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
 
   const{fullName,email,username,password} =req.body
-  console.log("email:",email);
+//   console.log("email:",email);
 //   if(fullName=== ""){
 //     throw new ApiError(400,"fullname is required")
 //   } we can check one by one like this also
@@ -28,10 +30,10 @@ if(
 ){
     throw new ApiError(400,"All fields are required")
 }
-
- User.findOne({
-    $or:[{email},{username}]
+const existedUser= await User.findOne({
+    $or:[{username},{email}]
 })
+
 if(existedUser){
     throw new ApiError(409,"uSER WITH eMAIL aLREADY eXISTS")
 }
@@ -39,15 +41,21 @@ if(existedUser){
 
 
 //avatar
- const avatarLocalPath=req.files?.avatar[0]?.path//files from multer
- const coverImagePath=req.files?.coverImage[0]?.path;
+ const avatarLocalPath= req.files?.avatar[0]?.path;//files from multer
+//  const coverImagePath=req.files?.coverImage[0]?.path;
+
+ let coverImageLocalPath;
+if(req.files && Array.isArray(req.files.coverImage)&& req.files.coverImage.length>0){
+    coverImageLocalPath= req.files.coverImage[0].path
+} 
 
  if(!avatarLocalPath){
     throw new ApiError(400,"Avatar file required ")
  }
 
-const avatar=await uploadOncloudinary(avatarLocalPath)
-const coverImage =await uploadOnCloudinary(coverImagePath)
+const avatar=await uploadOnCloudinary(avatarLocalPath)
+const coverImage =await uploadOnCloudinary(coverImageLocalPath)
+
 
 if(!avatar){
     throw new ApiError(400,"Avatar file Required")
@@ -59,7 +67,7 @@ if(!avatar){
     coverImage:coverImage?.url|| "",
     email,
     password,
-    username:username.toLower()
+    username:username.toLowerCase()
  })
 
  //check fro user craetion
@@ -67,7 +75,6 @@ if(!avatar){
 const created_user=await User.findById(user._id).select(
     "-password -refreshToken"
 )
-
     if(!created_user){
         throw new ApiError(500,"Something went wrong while registering user")
     }
@@ -75,9 +82,6 @@ const created_user=await User.findById(user._id).select(
     return res.status(201).json(
         new ApiResponse(200,created_user,"User registered Successfully")
     )
-
-
-
 } )
 
 export {

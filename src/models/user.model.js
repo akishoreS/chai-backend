@@ -18,7 +18,7 @@ const userSchema=new Schema({
         lowercase:true,
         trim:true
     },
-    fullname:{
+    fullName:{
         type:String,
         required:true,
         trim:true,
@@ -30,7 +30,6 @@ const userSchema=new Schema({
     },
     coverImage:{
         type:String,
-        required:true
     },
     watchHistory:[
         {
@@ -51,9 +50,9 @@ const userSchema=new Schema({
 })
 
 userSchema.pre("save",async function (next){
-    if(!this.isModified("password")) return nexr();
+    if(!this.isModified("password")) return next();
 
-    this.password=bcrypt.hash(this.password,10)
+    this.password=await bcrypt.hash(this.password,10)
     next()
 })//encoding/encrypting password using hooks \\
 
@@ -61,9 +60,10 @@ userSchema.methods.isPasswordCorrect=async function(password){
     return await bcrypt.compare(password,this.password)
 }//to decode password and check whether the password is correct or not
 
+
 //
 
-userSchema.methods.generateAccessTorkn=function(){
+userSchema.methods.generateAccessToken =function(){
     return jwt.sign({
         _id: this._id,
         email: this.email,
