@@ -1,5 +1,5 @@
 
-import mongoose,{Schema} from "mpngoose"
+import mongoose,{Schema} from "mongoose"
 
 const subscriptionSchema =new Schema({
     subscriber:{

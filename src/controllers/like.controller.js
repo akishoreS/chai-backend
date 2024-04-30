@@ -53,8 +53,8 @@ const toggleVideoLike = asyncHandler(async(req,res)=>{
 const toggleCommentLike= asyncHandler(async(req,res)=>{
     const {commentId} = req.params
 
-    const Comment = await comment.findById(commentId)
-    if(!Comment){
+    const comment = await Comment.findById(commentId)
+    if(!comment){
         throw new ApiError(404,"comment not found")
     }
 
@@ -122,7 +122,7 @@ const getLikedVideos = asyncHandler(async(req,res)=>{
     const likedVideosAggregate = await Like.aggregate([
         {
             $match:{
-                likedBy:new mongoose.Types.ObjectId(req.user?._id),
+                likedBy:new mongoose.Types.ObjectId(req.User?._id),
             },
         },
         {
@@ -141,9 +141,9 @@ const getLikedVideos = asyncHandler(async(req,res)=>{
                 },
                 {
                     $unwind:"$ownerDetails",
-                }
-                ]
-            }
+                },
+                ],
+            },
         },
         {
             $unwind:"likedVideo"
