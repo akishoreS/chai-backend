@@ -31,8 +31,6 @@ const registerUser = asyncHandler(async (req,res) => {
    //check for user creation
    // return response
 
-
-
   const{fullName,email,username,password} =req.body
 //   console.log("email:",email);
 //   if(fullName=== ""){
@@ -51,8 +49,6 @@ const existedUser= await User.findOne({
 if(existedUser){
     throw new ApiError(409,"uSER WITH eMAIL aLREADY eXISTS")
 }
-
-
 
 //avatar
  const avatarLocalPath= req.files?.avatar[0]?.path;//files from multer
@@ -97,6 +93,7 @@ const created_user=await User.findById(user._id).select(
         new ApiResponse(200,created_user,"User registered Successfully")
     )
 } )
+
 
 const loginUser=asyncHandler(async(req,res)=>{
     //req body->date
@@ -152,12 +149,12 @@ const loginUser=asyncHandler(async(req,res)=>{
 
 })
 
-const logoutUser= asyncHandler(async(req,res)=>{
+const logoutUser= asyncHandler(async(req,res)=>{ 
     await User.findByIdAndUpdate(
         req.user._id,
         {
             $set:{
-                refreshToken: undefined
+                refreshToken: undefined 
             }
         },
         {
@@ -400,6 +397,7 @@ const getUserChannelProfile = asyncHandler(async (req,res)=>{
         new ApiResponse(200,channel[0],"User channel fetched successfully")
     )
 })
+
 const getWatchHistory= asyncHandler(async(req,res)=>{
     const user= await User.aggregate([
         {
@@ -454,6 +452,10 @@ const getWatchHistory= asyncHandler(async(req,res)=>{
         )
     )
 })
+
+
+
+
 export {
     registerUser,
     loginUser,
